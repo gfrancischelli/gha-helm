@@ -1,0 +1,8 @@
+{
+  "name": "gha-helm",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "git@github.com:gfrancischelli/gha-helm.git",
+  "author": "Giovanni Francischelli <gifrancischelli@gmail.com>",
+  "license": "MIT"
+}
