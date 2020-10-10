@@ -1,8 +1,16 @@
 {
-  "name": "gha-helm",
+  "name": "chatty",
   "version": "1.0.0",
   "main": "index.js",
+  "type": "module",
   "repository": "git@github.com:gfrancischelli/gha-helm.git",
   "author": "Giovanni Francischelli <gifrancischelli@gmail.com>",
-  "license": "MIT"
+  "license": "MIT",
+  "scripts": {
+    "start": "node ./src/index.js"
+  },
+  "dependencies": {
+    "koa": "^2.13.0",
+    "koa-router": "^9.4.0"
+  }
 }
