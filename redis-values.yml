@@ -1,0 +1,4 @@
+usePassword: false
+fullnameOverride: redis
+configmap: |-
+  appendonly no

@@ -6,7 +6,7 @@ replicaCount: 1
 
 image:
   repository: gfrancischelli/chatty
-  pullPolicy: IfNotPresent
+  pullPolicy: Always
   # Overrides the image tag whose default is the chart appVersion.
   tag: "latest"
 
@@ -81,3 +81,6 @@ nodeSelector: {}
 tolerations: []
 
 affinity: {}
+
+redis_port: 6379
+redis_host: redis-master.default
