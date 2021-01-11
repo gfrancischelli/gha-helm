@@ -83,4 +83,4 @@ tolerations: []
 affinity: {}
 
 redis_port: 6379
-redis_host: redis-master.default
+redis_host: redis-master.redis

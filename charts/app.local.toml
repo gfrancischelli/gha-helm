@@ -1,0 +1,62 @@
+context = "local" # defaults to "default" if not provided
+
+# metadata -- add as many key/value pairs as you want
+[metadata]
+org = "accenture.coda"
+maintainer = "k8s-admin (giovanni@organizecloudlabs.com)"
+description = "chatty - a redis application"
+
+
+[settings]
+kubeContext = "minikube" # will try connect to this context first, if it does not exist, it will be created using the details below
+globalMaxHistory = 5 
+
+
+[namespaces]
+
+[namespaces.chatty]
+[[namespaces.chatty.limits]]
+type = "Container"
+[namespaces.chatty.limits.default]
+cpu = "300m"
+memory = "200Mi"
+[namespaces.chatty.limits.defaultRequest]
+cpu = "200m"
+memory = "100Mi"
+[[namespaces.chatty.limits]]
+type = "Pod"
+[namespaces.chatty.limits.max]
+memory = "300Mi"
+
+[namespaces.redis]
+protected = false
+[namespaces.redis.labels]
+app = "redis"
+
+
+[helmRepos]
+bitnami = "https://charts.bitnami.com/bitnami"
+
+[apps]
+
+[apps.chatty]
+namespace = "chatty" # maps to the namespace as defined in namespaces above
+enabled = true # change to false if you want to delete this app release [default = false]
+chart = "chatty" # changing the chart name means delete and recreate this release
+version = "0.1.0" # chart version
+### Optional values below
+valuesFile = "" # leaving it empty uses the default chart values
+test = false # run the tests when this release is installed for the first time only
+wait = true 
+[apps.chatty.set]
+redis_host = "redis-master.redis"
+
+
+[apps.redis]
+namespace = "redis" # maps to the namespace as defined in namespaces above
+enabled = true # change to false if you want to delete this app release [default = false]
+chart = "bitnami/redis" # changing the chart name means delete and recreate this release
+version = "11.1.0" # chart version
+### Optional values below
+valuesFile = "./redis-values.yml" # leaving it empty uses the default chart values
+maxHistory = 4

@@ -1,0 +1,902 @@
+NAME: redis
+LAST DEPLOYED: Wed Oct 14 14:22:23 2020
+NAMESPACE: redis
+STATUS: pending-install
+REVISION: 1
+TEST SUITE: None
+USER-SUPPLIED VALUES:
+configmap: appendonly no
+fullnameOverride: redis
+usePassword: false
+---
+
+COMPUTED VALUES:
+cluster:
+  enabled: true
+  slaveCount: 2
+clusterDomain: cluster.local
+configmap: appendonly no
+containerSecurityContext:
+  enabled: true
+  runAsUser: 1001
+fullnameOverride: redis
+global:
+  redis: {}
+image:
+  pullPolicy: IfNotPresent
+  registry: docker.io
+  repository: bitnami/redis
+  tag: 6.0.8-debian-10-r0
+master:
+  affinity: {}
+  command: /run.sh
+  configmap: null
+  customLivenessProbe: {}
+  customReadinessProbe: {}
+  disableCommands:
+  - FLUSHDB
+  - FLUSHALL
+  extraEnvVars: []
+  extraEnvVarsCM: []
+  extraEnvVarsSecret: []
+  extraFlags: []
+  livenessProbe:
+    enabled: true
+    failureThreshold: 5
+    initialDelaySeconds: 5
+    periodSeconds: 5
+    successThreshold: 1
+    timeoutSeconds: 5
+  persistence:
+    accessModes:
+    - ReadWriteOnce
+    enabled: true
+    matchExpressions: {}
+    matchLabels: {}
+    path: /data
+    size: 8Gi
+    subPath: ""
+  podAnnotations: {}
+  podLabels: {}
+  preExecCmds: ""
+  priorityClassName: {}
+  readinessProbe:
+    enabled: true
+    failureThreshold: 5
+    initialDelaySeconds: 5
+    periodSeconds: 5
+    successThreshold: 1
+    timeoutSeconds: 1
+  service:
+    annotations: {}
+    labels: {}
+    loadBalancerIP: null
+    port: 6379
+    type: ClusterIP
+  shareProcessNamespace: false
+  statefulset:
+    updateStrategy: RollingUpdate
+metrics:
+  enabled: false
+  image:
+    pullPolicy: IfNotPresent
+    registry: docker.io
+    repository: bitnami/redis-exporter
+    tag: 1.11.1-debian-10-r12
+  podAnnotations:
+    prometheus.io/port: "9121"
+    prometheus.io/scrape: "true"
+  prometheusRule:
+    additionalLabels: {}
+    enabled: false
+    namespace: ""
+    rules: []
+  service:
+    annotations: {}
+    labels: {}
+    type: ClusterIP
+  serviceMonitor:
+    enabled: false
+    selector:
+      prometheus: kube-prometheus
+networkPolicy:
+  enabled: false
+  ingressNSMatchLabels: {}
+  ingressNSPodMatchLabels: {}
+password: ""
+persistence:
+  existingClaim: null
+podDisruptionBudget:
+  enabled: false
+  minAvailable: 1
+podSecurityPolicy:
+  create: false
+rbac:
+  create: false
+  role:
+    rules: []
+redisPort: 6379
+securityContext:
+  enabled: true
+  fsGroup: 1001
+sentinel:
+  configmap: null
+  customLivenessProbe: {}
+  customReadinessProbe: {}
+  downAfterMilliseconds: 60000
+  enabled: false
+  failoverTimeout: 18000
+  image:
+    pullPolicy: IfNotPresent
+    registry: docker.io
+    repository: bitnami/redis-sentinel
+    tag: 6.0.8-debian-10-r1
+  initialCheckTimeout: 5
+  livenessProbe:
+    enabled: true
+    failureThreshold: 5
+    initialDelaySeconds: 5
+    periodSeconds: 5
+    successThreshold: 1
+    timeoutSeconds: 5
+  masterSet: mymaster
+  parallelSyncs: 1
+  port: 26379
+  quorum: 2
+  readinessProbe:
+    enabled: true
+    failureThreshold: 5
+    initialDelaySeconds: 5
+    periodSeconds: 5
+    successThreshold: 1
+    timeoutSeconds: 1
+  service:
+    annotations: {}
+    labels: {}
+    loadBalancerIP: null
+    redisPort: 6379
+    sentinelPort: 26379
+    type: ClusterIP
+  staticID: false
+  usePassword: true
+serviceAccount:
+  create: false
+  name: null
+slave:
+  affinity: {}
+  command: /run.sh
+  configmap: null
+  customLivenessProbe: {}
+  customReadinessProbe: {}
+  disableCommands:
+  - FLUSHDB
+  - FLUSHALL
+  extraEnvVars: []
+  extraEnvVarsCM: []
+  extraEnvVarsSecret: []
+  extraFlags: []
+  livenessProbe:
+    enabled: true
+    failureThreshold: 5
+    initialDelaySeconds: 30
+    periodSeconds: 10
+    successThreshold: 1
+    timeoutSeconds: 5
+  persistence:
+    accessModes:
+    - ReadWriteOnce
+    enabled: true
+    matchExpressions: {}
+    matchLabels: {}
+    path: /data
+    size: 8Gi
+    subPath: ""
+  podAnnotations: {}
+  podLabels: {}
+  port: 6379
+  preExecCmds: ""
+  readinessProbe:
+    enabled: true
+    failureThreshold: 5
+    initialDelaySeconds: 5
+    periodSeconds: 10
+    successThreshold: 1
+    timeoutSeconds: 10
+  service:
+    annotations: {}
+    labels: {}
+    loadBalancerIP: null
+    port: 6379
+    type: ClusterIP
+  shareProcessNamespace: false
+  spreadConstraints: {}
+  statefulset:
+    updateStrategy: RollingUpdate
+sysctlImage:
+  command: []
+  enabled: false
+  mountHostSys: false
+  pullPolicy: Always
+  registry: docker.io
+  repository: bitnami/minideb
+  resources: {}
+  tag: buster
+tls:
+  authClients: true
+  certCAFilename: null
+  certFilename: null
+  certKeyFilename: null
+  certificatesSecret: null
+  enabled: false
+usePassword: false
+usePasswordFile: false
+volumePermissions:
+  enabled: false
+  image:
+    pullPolicy: Always
+    registry: docker.io
+    repository: bitnami/minideb
+    tag: buster
+  resources: {}
+  securityContext:
+    runAsUser: 0
+
+HOOKS:
+MANIFEST:
+---
+# Source: redis/templates/configmap-scripts.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: redis-scripts
+  namespace: redis
+  labels:
+    app: redis
+    chart: redis-11.1.0
+    heritage: Helm
+    release: redis
+data:
+  start-master.sh: |
+    #!/bin/bash
+    useradd redis
+    chown -R redis /data
+    if [[ -n $REDIS_PASSWORD_FILE ]]; then
+      password_aux=`cat ${REDIS_PASSWORD_FILE}`
+      export REDIS_PASSWORD=$password_aux
+    fi
+    if [[ ! -f /opt/bitnami/redis/etc/master.conf ]];then
+      cp /opt/bitnami/redis/mounted-etc/master.conf /opt/bitnami/redis/etc/master.conf
+    fi
+    if [[ ! -f /opt/bitnami/redis/etc/redis.conf ]];then
+      cp /opt/bitnami/redis/mounted-etc/redis.conf /opt/bitnami/redis/etc/redis.conf
+    fi
+    ARGS=("--port" "${REDIS_PORT}")
+    ARGS+=("--protected-mode" "no")
+    ARGS+=("--include" "/opt/bitnami/redis/etc/redis.conf")
+    ARGS+=("--include" "/opt/bitnami/redis/etc/master.conf")
+    exec /run.sh "${ARGS[@]}"
+  start-slave.sh: |
+    #!/bin/bash
+    useradd redis
+    chown -R redis /data
+    if [[ -n $REDIS_PASSWORD_FILE ]]; then
+      password_aux=`cat ${REDIS_PASSWORD_FILE}`
+      export REDIS_PASSWORD=$password_aux
+    fi
+    if [[ -n $REDIS_MASTER_PASSWORD_FILE ]]; then
+      password_aux=`cat ${REDIS_MASTER_PASSWORD_FILE}`
+      export REDIS_MASTER_PASSWORD=$password_aux
+    fi
+    if [[ ! -f /opt/bitnami/redis/etc/replica.conf ]];then
+      cp /opt/bitnami/redis/mounted-etc/replica.conf /opt/bitnami/redis/etc/replica.conf
+    fi
+    if [[ ! -f /opt/bitnami/redis/etc/redis.conf ]];then
+      cp /opt/bitnami/redis/mounted-etc/redis.conf /opt/bitnami/redis/etc/redis.conf
+    fi
+    ARGS=("--port" "${REDIS_PORT}")
+    ARGS+=("--slaveof" "${REDIS_MASTER_HOST}" "${REDIS_MASTER_PORT_NUMBER}")
+    ARGS+=("--protected-mode" "no")
+    ARGS+=("--include" "/opt/bitnami/redis/etc/redis.conf")
+    ARGS+=("--include" "/opt/bitnami/redis/etc/replica.conf")
+    exec /run.sh "${ARGS[@]}"
+---
+# Source: redis/templates/configmap.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: redis
+  namespace: redis
+  labels:
+    app: redis
+    chart: redis-11.1.0
+    heritage: Helm
+    release: redis
+data:
+  redis.conf: |-
+    # User-supplied configuration:
+    appendonly no
+  master.conf: |-
+    dir /data
+    rename-command FLUSHDB ""
+    rename-command FLUSHALL ""
+  replica.conf: |-
+    dir /data
+    slave-read-only yes
+    rename-command FLUSHDB ""
+    rename-command FLUSHALL ""
+---
+# Source: redis/templates/health-configmap.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: redis-health
+  namespace: redis
+  labels:
+    app: redis
+    chart: redis-11.1.0
+    heritage: Helm
+    release: redis
+data:
+  ping_readiness_local.sh: |-
+    #!/bin/bash
+    response=$(
+      timeout -s 3 $1 \
+      redis-cli \
+        -h localhost \
+        -p $REDIS_PORT \
+        ping
+    )
+    if [ "$response" != "PONG" ]; then
+      echo "$response"
+      exit 1
+    fi
+  ping_liveness_local.sh: |-
+    #!/bin/bash
+    response=$(
+      timeout -s 3 $1 \
+      redis-cli \
+        -h localhost \
+        -p $REDIS_PORT \
+        ping
+    )
+    if [ "$response" != "PONG" ] && [ "$response" != "LOADING Redis is loading the dataset in memory" ]; then
+      echo "$response"
+      exit 1
+    fi
+  ping_readiness_master.sh: |-
+    #!/bin/bash
+     response=$(
+      timeout -s 3 $1 \
+      redis-cli \
+        -h $REDIS_MASTER_HOST \
+        -p $REDIS_MASTER_PORT_NUMBER \
+        ping
+    )
+    if [ "$response" != "PONG" ]; then
+      echo "$response"
+      exit 1
+    fi
+  ping_liveness_master.sh: |-
+    #!/bin/bash
+    response=$(
+      timeout -s 3 $1 \
+      redis-cli \
+        -h $REDIS_MASTER_HOST \
+        -p $REDIS_MASTER_PORT_NUMBER \
+        ping
+    )
+    if [ "$response" != "PONG" ] && [ "$response" != "LOADING Redis is loading the dataset in memory" ]; then
+      echo "$response"
+      exit 1
+    fi
+  ping_readiness_local_and_master.sh: |-
+    script_dir="$(dirname "$0")"
+    exit_status=0
+    "$script_dir/ping_readiness_local.sh" $1 || exit_status=$?
+    "$script_dir/ping_readiness_master.sh" $1 || exit_status=$?
+    exit $exit_status
+  ping_liveness_local_and_master.sh: |-
+    script_dir="$(dirname "$0")"
+    exit_status=0
+    "$script_dir/ping_liveness_local.sh" $1 || exit_status=$?
+    "$script_dir/ping_liveness_master.sh" $1 || exit_status=$?
+    exit $exit_status
+---
+# Source: redis/templates/headless-svc.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: redis-headless
+  namespace: redis
+  labels:
+    app: redis
+    chart: redis-11.1.0
+    release: redis
+    heritage: Helm
+spec:
+  type: ClusterIP
+  clusterIP: None
+  ports:
+    - name: redis
+      port: 6379
+      targetPort: redis
+  selector:
+    app: redis
+    release: redis
+---
+# Source: redis/templates/redis-master-svc.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: redis-master
+  namespace: redis
+  labels:
+    app: redis
+    chart: redis-11.1.0
+    release: redis
+    heritage: Helm
+spec:
+  type: ClusterIP
+  ports:
+    - name: redis
+      port: 6379
+      targetPort: redis
+  selector:
+    app: redis
+    release: redis
+    role: master
+---
+# Source: redis/templates/redis-slave-svc.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: redis-slave
+  namespace: redis
+  labels:
+    app: redis
+    chart: redis-11.1.0
+    release: redis
+    heritage: Helm
+spec:
+  type: ClusterIP
+  ports:
+    - name: redis
+      port: 6379
+      targetPort: redis
+  selector:
+    app: redis
+    release: redis
+    role: slave
+---
+# Source: redis/templates/redis-master-statefulset.yaml
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: redis-master
+  namespace: redis
+  labels:
+    app: redis
+    chart: redis-11.1.0
+    release: redis
+    heritage: Helm
+spec:
+  selector:
+    matchLabels:
+      app: redis
+      release: redis
+      role: master
+  serviceName: redis-headless
+  template:
+    metadata:
+      labels:
+        app: redis
+        chart: redis-11.1.0
+        release: redis
+        role: master
+      annotations:
+        checksum/health: ee4068140dbfc81eb4062c5319c2100e57c68f0e835921728ff122350ed6f37d
+        checksum/configmap: 5436c6d8c172dca377caba459932e7fb8e2c79e07527a3dd00d11801c6e507fb
+        checksum/secret: e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855
+    spec:
+      
+      securityContext:
+        fsGroup: 1001
+      serviceAccountName: default
+      containers:
+        - name: redis
+          image: docker.io/bitnami/redis:6.0.8-debian-10-r0
+          imagePullPolicy: "IfNotPresent"
+          securityContext:
+            runAsUser: 1001
+          command:
+            - /bin/bash
+            - -c
+            - /opt/bitnami/scripts/start-scripts/start-master.sh
+          env:
+            - name: REDIS_REPLICATION_MODE
+              value: master
+            - name: ALLOW_EMPTY_PASSWORD
+              value: "yes"
+            - name: REDIS_TLS_ENABLED
+              value: "no"
+            - name: REDIS_PORT
+              value: "6379"
+          ports:
+            - name: redis
+              containerPort: 6379
+          livenessProbe:
+            initialDelaySeconds: 5
+            periodSeconds: 5
+            # One second longer than command timeout should prevent generation of zombie processes.
+            timeoutSeconds: 6
+            successThreshold: 1
+            failureThreshold: 5
+            exec:
+              command:
+                - sh
+                - -c
+                - /health/ping_liveness_local.sh 5
+          readinessProbe:
+            initialDelaySeconds: 5
+            periodSeconds: 5
+            timeoutSeconds: 2
+            successThreshold: 1
+            failureThreshold: 5
+            exec:
+              command:
+                - sh
+                - -c
+                - /health/ping_readiness_local.sh 1
+          volumeMounts:
+            - name: start-scripts
+              mountPath: /opt/bitnami/scripts/start-scripts
+            - name: health
+              mountPath: /health
+            - name: redis-data
+              mountPath: /data
+              subPath: 
+            - name: config
+              mountPath: /opt/bitnami/redis/mounted-etc
+            - name: redis-tmp-conf
+              mountPath: /opt/bitnami/redis/etc/
+      volumes:
+        - name: start-scripts
+          configMap:
+            name: redis-scripts
+            defaultMode: 0755
+        - name: health
+          configMap:
+            name: redis-health
+            defaultMode: 0755
+        - name: config
+          configMap:
+            name: redis
+        - name: redis-tmp-conf
+          emptyDir: {}
+  volumeClaimTemplates:
+    - metadata:
+        name: redis-data
+        labels:
+          app: redis
+          release: redis
+          heritage: Helm
+          component: master
+      spec:
+        accessModes:
+          - "ReadWriteOnce"
+        resources:
+          requests:
+            storage: "8Gi"
+        
+        selector:
+  updateStrategy:
+    type: RollingUpdate
+---
+# Source: redis/templates/redis-slave-statefulset.yaml
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: redis-slave
+  namespace: redis
+  labels:
+    app: redis
+    chart: redis-11.1.0
+    release: redis
+    heritage: Helm
+spec:
+  replicas: 2
+  serviceName: redis-headless
+  selector:
+    matchLabels:
+      app: redis
+      release: redis
+      role: slave
+  template:
+    metadata:
+      labels:
+        app: redis
+        release: redis
+        chart: redis-11.1.0
+        role: slave
+      annotations:
+        checksum/health: ee4068140dbfc81eb4062c5319c2100e57c68f0e835921728ff122350ed6f37d
+        checksum/configmap: 5436c6d8c172dca377caba459932e7fb8e2c79e07527a3dd00d11801c6e507fb
+        checksum/secret: e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855
+    spec:
+      
+      securityContext:
+        fsGroup: 1001
+      serviceAccountName: default
+      containers:
+        - name: redis
+          image: docker.io/bitnami/redis:6.0.8-debian-10-r0
+          imagePullPolicy: "IfNotPresent"
+          securityContext:
+            runAsUser: 1001
+          command:
+            - /bin/bash
+            - -c
+            - /opt/bitnami/scripts/start-scripts/start-slave.sh
+          env:
+            - name: REDIS_REPLICATION_MODE
+              value: slave
+            - name: REDIS_MASTER_HOST
+              value: redis-master-0.redis-headless.redis.svc.cluster.local
+            - name: REDIS_MASTER_PORT_NUMBER
+              value: "6379"
+            - name: ALLOW_EMPTY_PASSWORD
+              value: "yes"
+            - name: REDIS_TLS_ENABLED
+              value: "no"
+            - name: REDIS_PORT
+              value: "6379"
+          ports:
+            - name: redis
+              containerPort: 6379
+          livenessProbe:
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            timeoutSeconds: 6
+            successThreshold: 1
+            failureThreshold: 5
+            exec:
+              command:
+                - sh
+                - -c
+                - /health/ping_liveness_local_and_master.sh 5
+          readinessProbe:
+            initialDelaySeconds: 5
+            periodSeconds: 10
+            timeoutSeconds: 11
+            successThreshold: 1
+            failureThreshold: 5
+            exec:
+              command:
+                - sh
+                - -c
+                - /health/ping_readiness_local_and_master.sh 10
+          resources:
+            null
+          volumeMounts:
+            - name: start-scripts
+              mountPath: /opt/bitnami/scripts/start-scripts
+            - name: health
+              mountPath: /health
+            - name: redis-data
+              mountPath: /data
+            - name: config
+              mountPath: /opt/bitnami/redis/mounted-etc
+            - name: redis-tmp-conf
+              mountPath: /opt/bitnami/redis/etc
+      volumes:
+        - name: start-scripts
+          configMap:
+            name: redis-scripts
+            defaultMode: 0755
+        - name: health
+          configMap:
+            name: redis-health
+            defaultMode: 0755
+        - name: config
+          configMap:
+            name: redis
+        - name: redis-tmp-conf
+          emptyDir: {}
+  volumeClaimTemplates:
+    - metadata:
+        name: redis-data
+        labels:
+          app: redis
+          release: redis
+          heritage: Helm
+          component: slave
+      spec:
+        accessModes:
+          - "ReadWriteOnce"
+        resources:
+          requests:
+            storage: "8Gi"
+        
+        selector:
+  updateStrategy:
+    type: RollingUpdate
+
+#----------------------------------------------------------------------------------------------------------
+#----------------------------------------------------------------------------------------------------------
+#----------------------------------------------------------------------------------------------------------
+#----------------------------------------------------------------------------------------------------------
+
+NAME: chatty
+LAST DEPLOYED: Wed Oct 14 14:22:23 2020
+NAMESPACE: chatty
+STATUS: pending-install
+REVISION: 1
+USER-SUPPLIED VALUES:
+{}
+
+COMPUTED VALUES:
+affinity: {}
+autoscaling:
+  enabled: false
+  maxReplicas: 100
+  minReplicas: 1
+  targetCPUUtilizationPercentage: 80
+fullnameOverride: ""
+image:
+  pullPolicy: Always
+  repository: gfrancischelli/chatty
+  tag: latest
+imagePullSecrets: []
+ingress:
+  annotations: {}
+  enabled: false
+  hosts:
+  - host: chart-example.local
+    paths: []
+  tls: []
+nameOverride: ""
+nodeSelector: {}
+podAnnotations: {}
+podSecurityContext: {}
+redis_host: redis-master.default
+redis_port: 6379
+replicaCount: 1
+resources: {}
+securityContext: {}
+service:
+  port: 80
+  type: NodePort
+serviceAccount:
+  annotations: {}
+  create: true
+  name: ""
+tolerations: []
+
+HOOKS:
+---
+# Source: chatty/templates/tests/test-connection.yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: "chatty-test-connection"
+  labels:
+    helm.sh/chart: chatty-0.1.0
+    app.kubernetes.io/name: chatty
+    app.kubernetes.io/instance: chatty
+    app.kubernetes.io/version: "0.1.0"
+    app.kubernetes.io/managed-by: Helm
+  annotations:
+    "helm.sh/hook": test-success
+spec:
+  containers:
+    - name: wget
+      image: busybox
+      command: ['wget']
+      args: ['chatty:80']
+  restartPolicy: Never
+MANIFEST:
+---
+# Source: chatty/templates/serviceaccount.yaml
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: chatty
+  labels:
+    helm.sh/chart: chatty-0.1.0
+    app.kubernetes.io/name: chatty
+    app.kubernetes.io/instance: chatty
+    app.kubernetes.io/version: "0.1.0"
+    app.kubernetes.io/managed-by: Helm
+---
+# Source: chatty/templates/config-map.yaml
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: chatty-config
+  labels:
+    helm.sh/chart: chatty-0.1.0
+    app.kubernetes.io/name: chatty
+    app.kubernetes.io/instance: chatty
+    app.kubernetes.io/version: "0.1.0"
+    app.kubernetes.io/managed-by: Helm
+data:
+  REDIS_PORT: "6379"
+  REDIS_HOST: redis-master.default
+---
+# Source: chatty/templates/service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: chatty
+  labels:
+    helm.sh/chart: chatty-0.1.0
+    app.kubernetes.io/name: chatty
+    app.kubernetes.io/instance: chatty
+    app.kubernetes.io/version: "0.1.0"
+    app.kubernetes.io/managed-by: Helm
+spec:
+  type: NodePort
+  ports:
+    - port: 80
+      targetPort: http
+      protocol: TCP
+      name: http
+  selector:
+    app.kubernetes.io/name: chatty
+    app.kubernetes.io/instance: chatty
+---
+# Source: chatty/templates/deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: chatty
+  labels:
+    helm.sh/chart: chatty-0.1.0
+    app.kubernetes.io/name: chatty
+    app.kubernetes.io/instance: chatty
+    app.kubernetes.io/version: "0.1.0"
+    app.kubernetes.io/managed-by: Helm
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: chatty
+      app.kubernetes.io/instance: chatty
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: chatty
+        app.kubernetes.io/instance: chatty
+    spec:
+      serviceAccountName: chatty
+      securityContext:
+        {}
+      containers:
+        - name: chatty
+          securityContext:
+            {}
+          image: "gfrancischelli/chatty:latest"
+          imagePullPolicy: Always
+          ports:
+            - name: http
+              containerPort: 8080
+              protocol: TCP
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: http
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: http
+          resources:
+            {}
+          envFrom:
+            - configMapRef:
+                name: chatty-config
+
+NOTES:
+1. Get the application URL by running these commands:
+  export NODE_PORT=$(kubectl get --namespace chatty -o jsonpath="{.spec.ports[0].nodePort}" services chatty)
+  export NODE_IP=$(kubectl get nodes --namespace chatty -o jsonpath="{.items[0].status.addresses[0].address}")
+  echo http://$NODE_IP:$NODE_PORT
